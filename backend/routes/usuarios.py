@@ -9,7 +9,7 @@ usuarios_bp = Blueprint('usuarios', __name__)
 @jwt_required()
 def showUsuarios():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM usuarios WHERE USU_ESTADO = 1")
+    con.execute("SELECT * FROM T_USUARIOS WHERE USU_ESTADO = 1")
     usuarios = con.fetchall()
     con.close()
     listado = []
