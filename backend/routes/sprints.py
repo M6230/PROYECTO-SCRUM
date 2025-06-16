@@ -9,7 +9,7 @@ sprints_bp = Blueprint('sprints', __name__)
 @jwt_required()
 def showSprint():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM sprint WHERE SPR_ESTADO = 1")
+    con.execute("SELECT * FROM T_SPRINTS WHERE SPR_ESTADO = 1")
     sprints = con.fetchall()
     listado = []
     for sprint in sprints:
