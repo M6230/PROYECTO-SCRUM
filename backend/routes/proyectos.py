@@ -9,7 +9,7 @@ proyectos_bp = Blueprint('proyectos', __name__)
 @jwt_required()
 def showProyectos():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM proyecto WHERE PROY_ESTADO = 1")
+    con.execute("SELECT * FROM T_PROYECTOS WHERE PROY_ESTADO = 1")
     proyectos = con.fetchall()
     listado = []
     for proyecto in proyectos:
