@@ -9,7 +9,7 @@ sprints_bp = Blueprint('sprints', __name__)
 @jwt_required()
 def showSprint():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM sprint WHERE SPR_ESTADO = 1")
+    con.execute("SELECT * FROM T_SPRINTS WHERE SPR_ESTADO = 1")
     sprints = con.fetchall()
     listado = []
     for sprint in sprints:
@@ -40,7 +40,7 @@ def createSprint():
 
     con = current_app.mysql.connection.cursor()
     con.execute("""
-        SELECT * FROM sprint 
+        SELECT * FROM T_SPRINTS 
         WHERE SPR_FCH_INICIO = %s AND SPR_FCH_FIN = %s AND SPR_ESTADO = 1
     """, [fch_inicio, fch_fin])
     duplicado = con.fetchone()
@@ -50,7 +50,7 @@ def createSprint():
         return jsonify({"mensaje": "Ya existe un sprint activo con esas fechas"}), 409
 
     con.execute("""
-        SELECT * FROM sprint 
+        SELECT * FROM T_SPRINTS 
         WHERE SPR_OBJETIVO = %s AND SPR_ESTADO = 1
     """, [objetivo])
     duplicado_obj = con.fetchone()
@@ -62,7 +62,7 @@ def createSprint():
     estado = 1
     uid = uuid.uuid4()
     con.execute("""
-        INSERT INTO sprint (SPR_FCH_INICIO, SPR_FCH_FIN, SPR_OBJETIVO, SPR_ESTADO, SPR_UID)
+        INSERT INTO T_SPRINTS (SPR_FCH_INICIO, SPR_FCH_FIN, SPR_OBJETIVO, SPR_ESTADO, SPR_UID)
         VALUES (%s, %s, %s, %s, %s)
     """, [fch_inicio, fch_fin, objetivo, estado, uid])
     con.connection.commit()
@@ -88,7 +88,7 @@ def updateSprint(id):
 
     con = current_app.mysql.connection.cursor()
     con.execute("""
-        SELECT * FROM sprint 
+        SELECT * FROM T_SPRINTS 
         WHERE SPR_FCH_INICIO = %s AND SPR_FCH_FIN = %s AND SPR_ID != %s AND SPR_ESTADO = 1
     """, [fch_inicio, fch_fin, id])
     duplicado = con.fetchone()
@@ -98,7 +98,7 @@ def updateSprint(id):
         return jsonify({"mensaje": "Ya existe otro sprint activo con esas fechas"}), 409
 
     con.execute("""
-        SELECT * FROM sprint 
+        SELECT * FROM T_SPRINTS 
         WHERE SPR_OBJETIVO = %s AND SPR_ID != %s AND SPR_ESTADO = 1
     """, [objetivo, id])
     duplicado_obj = con.fetchone()
@@ -110,7 +110,7 @@ def updateSprint(id):
     estado = 1
     uid = uuid.uuid4()
     con.execute("""
-        UPDATE sprint
+        UPDATE T_SPRINTS
         SET SPR_FCH_INICIO = %s, SPR_FCH_FIN = %s, SPR_OBJETIVO = %s, SPR_ESTADO = %s, SPR_UID = %s
         WHERE SPR_ID = %s
     """, [fch_inicio, fch_fin, objetivo, estado, uid, id])
@@ -125,7 +125,7 @@ def updateSprint(id):
 @jwt_required()
 def deleteSprint(id):
     con = current_app.mysql.connection.cursor()
-    con.execute("UPDATE sprint SET SPR_ESTADO = 0 WHERE SPR_ID = %s", [id])
+    con.execute("UPDATE T_SPRINTS SET SPR_ESTADO = 0 WHERE SPR_ID = %s", [id])
     con.connection.commit()
 
     return jsonify({"mensaje": "Se ha eliminado el sprint"})
