@@ -9,7 +9,7 @@ proyectos_bp = Blueprint('proyectos', __name__)
 @jwt_required()
 def showProyectos():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM proyecto WHERE PROY_ESTADO = 1")
+    con.execute("SELECT * FROM T_PROYECTOS WHERE PROY_ESTADO = 1")
     proyectos = con.fetchall()
     listado = []
     for proyecto in proyectos:
@@ -37,7 +37,7 @@ def createProyecto():
     descripcion = peticion["PROY_DESCRIPCION"]
 
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM proyecto WHERE PROY_NOMBRE = %s AND PROY_ESTADO = 1", [nombre])
+    con.execute("SELECT * FROM T_PROYECTOS WHERE PROY_NOMBRE = %s AND PROY_ESTADO = 1", [nombre])
     duplicado = con.fetchone()
 
     if duplicado:
@@ -47,7 +47,7 @@ def createProyecto():
     estado = 1
     uid = uuid.uuid4()
     con.execute("""
-        INSERT INTO proyecto (PROY_NOMBRE, PROY_DESCRIPCION, PROY_ESTADO, PROY_UID)
+        INSERT INTO T_PROYECTOS (PROY_NOMBRE, PROY_DESCRIPCION, PROY_ESTADO, PROY_UID)
         VALUES (%s, %s, %s, %s)
     """, [nombre, descripcion, estado, uid])
     con.connection.commit()
@@ -72,7 +72,7 @@ def updateProyecto(id):
 
     con = current_app.mysql.connection.cursor()
     con.execute("""
-        SELECT * FROM proyecto 
+        SELECT * FROM T_PROYECTOS 
         WHERE PROY_NOMBRE = %s AND PROY_ID != %s AND PROY_ESTADO = 1
     """, [nombre, id])
     duplicado = con.fetchone()
@@ -84,7 +84,7 @@ def updateProyecto(id):
     estado = 1
     uid = uuid.uuid4()
     con.execute("""
-        UPDATE proyecto
+        UPDATE T_PROYECTOS
         SET PROY_NOMBRE = %s, PROY_DESCRIPCION = %s, PROY_ESTADO = %s, PROY_UID = %s
         WHERE PROY_ID = %s
     """, [nombre, descripcion, estado, uid, id])
@@ -99,7 +99,7 @@ def updateProyecto(id):
 @jwt_required()
 def deleteProyecto(id):
     con = current_app.mysql.connection.cursor()
-    con.execute("UPDATE proyecto SET PROY_ESTADO = 0 WHERE PROY_ID = %s", [id])
+    con.execute("UPDATE T_PROYECTOS SET PROY_ESTADO = 0 WHERE PROY_ID = %s", [id])
     con.connection.commit()
 
     return jsonify({"mensaje": "Se ha eliminado el proyecto"})
