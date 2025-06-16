@@ -16,7 +16,7 @@ def login():
     contraseña = peticion["USU_CONTRASEÑA"]
 
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM usuarios WHERE USU_CORREO = %s", (correo,))
+    con.execute("SELECT * FROM T_USUARIOS WHERE USU_CORREO = %s", (correo,))
     row = con.fetchone()
 
     if row is None:
