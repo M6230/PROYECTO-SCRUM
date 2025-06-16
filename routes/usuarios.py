@@ -9,7 +9,7 @@ usuarios_bp = Blueprint('usuarios', __name__)
 @jwt_required()
 def showUsuarios():
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM usuarios WHERE USU_ESTADO = 1")
+    con.execute("SELECT * FROM T_USUARIOS WHERE USU_ESTADO = 1")
     usuarios = con.fetchall()
     con.close()
     listado = []
@@ -40,7 +40,7 @@ def createUsuario():
     correo = peticion["USU_CORREO"]
 
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM usuarios WHERE USU_CORREO = %s AND USU_ESTADO = 1", [correo])
+    con.execute("SELECT * FROM T_USUARIOS WHERE USU_CORREO = %s AND USU_ESTADO = 1", [correo])
     existente = con.fetchone()
 
     if existente:
@@ -55,7 +55,7 @@ def createUsuario():
     password = peticion["USU_CONTRASEÑA"]
 
     con.execute("""
-        INSERT INTO usuarios (USU_NOMBRE, USU_APELLIDO, USU_CORREO, USU_ROL, USU_ESTADO, USU_uid, USU_CONTRASEÑA)
+        INSERT INTO T_USUARIOS (USU_NOMBRE, USU_APELLIDO, USU_CORREO, USU_ROL, USU_ESTADO, USU_uid, USU_CONTRASEÑA)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, [nombre, apellido, correo, rol, estado, uid, password])
     con.connection.commit()
@@ -78,7 +78,7 @@ def updateUsuario(id):
     correo = peticion["USU_CORREO"]
 
     con = current_app.mysql.connection.cursor()
-    con.execute("SELECT * FROM usuarios WHERE USU_CORREO = %s AND USU_id != %s AND USU_ESTADO = 1", [correo, id])
+    con.execute("SELECT * FROM T_USUARIOS WHERE USU_CORREO = %s AND USU_id != %s AND USU_ESTADO = 1", [correo, id])
     existente = con.fetchone()
 
     if existente:
@@ -93,7 +93,7 @@ def updateUsuario(id):
     password = peticion["USU_CONTRASEÑA"]
 
     con.execute("""
-        UPDATE usuarios
+        UPDATE T_USUARIOS
         SET USU_NOMBRE = %s, USU_APELLIDO = %s, USU_CORREO = %s, USU_ROL = %s, USU_ESTADO = %s, USU_uid = %s, USU_CONTRASEÑA = %s
         WHERE USU_id = %s
     """, [nombre, apellido, correo, rol, estado, uid, password, id])
@@ -108,7 +108,7 @@ def updateUsuario(id):
 @jwt_required()
 def deleteUsuario(id):
     con = current_app.mysql.connection.cursor()
-    con.execute("UPDATE usuarios SET USU_ESTADO = 0 WHERE USU_id = %s", [id])
+    con.execute("UPDATE T_USUARIOS SET USU_ESTADO = 0 WHERE USU_id = %s", [id])
     con.connection.commit()
 
     return jsonify({"mensaje": "Se ha eliminado el usuario"})
