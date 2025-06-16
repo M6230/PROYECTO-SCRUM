@@ -1,5 +1,6 @@
 Flask
 flask-mysqldb
+mysql-connector-python
 flask-jwt-extended
 python-dotenv
 gunicorn
